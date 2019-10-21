@@ -14,13 +14,19 @@ type Handler struct {
 	sid          string
 	sessionToken string
 	baseURL      string
+	debug        bool
 }
 
 func New(baseURL string) *Handler {
 	return &Handler{
 		baseURL:      baseURL,
 		sessionToken: "",
+		debug:        false,
 	}
+}
+
+func (h *Handler) Debug(v bool) {
+	h.debug = v
 }
 
 func (h *Handler) Login(username, password string) error {
@@ -30,6 +36,9 @@ func (h *Handler) Login(username, password string) error {
 		fmt.Sprintf("Username=%s", username),
 		fmt.Sprintf("Password=%s", password),
 	})
+	if h.debug {
+		log.Printf("response: %s error: %s\n", body, err)
+	}
 	if err != nil {
 		return err
 	}
@@ -39,7 +48,9 @@ func (h *Handler) Login(username, password string) error {
 	// successful;SID=167772160
 	if strings.HasPrefix("successful", body) {
 		h.sid = strings.Split(body, "=")[1]
-		log.Printf("new SID: %s", h.sid)
+		if h.debug {
+			log.Printf("new SID: %s\n", h.sid)
+		}
 	}
 
 	return nil
@@ -61,7 +72,9 @@ func (h *Handler) call(path, method string, parameters []string) (string, error)
 	data := strings.Join(parameters, "&")
 	u, _ := url.ParseRequestURI(h.baseURL)
 	u.Path = path
-	//log.Printf("doing call to %s data: %v", u, data)
+	if h.debug {
+		log.Printf("doing call to %s data: %v\n", u, data)
+	}
 	client := &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
@@ -83,23 +96,21 @@ func (h *Handler) call(path, method string, parameters []string) (string, error)
 		r.Header.Add("Cookie", cookie)
 	}
 
-	//log.Printf("request: %+v", r)
 	resp, err := client.Do(r)
 	if err != nil {
 		return "", err
 	}
-	//log.Printf("response: %+v", resp)
 	defer resp.Body.Close()
 
 	for k, v := range resp.Header {
-		//log.Printf("header: %s=%s", k, v)
 		if k == "Set-Cookie" {
 			vs := strings.Split(v[0], ";")
 			for _, vss := range vs {
 				if strings.HasPrefix(vss, "sessionToken") {
 					h.sessionToken = strings.Split(vss, "=")[1]
-					//log.Printf("new session token: %s", h.sessionToken)
-					//log.Printf("new session token")
+					if h.debug {
+						log.Printf("new session token: %s\n", h.sessionToken)
+					}
 				}
 			}
 		}

@@ -17,12 +17,14 @@ func TestLogin(t *testing.T) {
 	err = z.Login("NULL", "password")
 	if err != nil {
 		assert.Failf(t, "login failed: %s", err.Error())
+		return
 	}
 
 	// get settings to see if we are logged in
 	res, err := z.GetGlobalSettings()
 	if err != nil {
 		assert.Failf(t, "get global settings failed: %s", err.Error())
+		return
 	}
 	log.Printf("logged in: %t", res.AccessLevel == 1)
 

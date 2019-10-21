@@ -13,6 +13,9 @@ Usage:
 ```
 z := New("http://url-to-connect-box") // url to ziggo box
 
+// optionally enable debug logging (this will show the full request and reply including credentials!)
+z.Debug(true)
+
 // init sets up the initial sessiontoken
 _, err := z.Init()
 
@@ -45,4 +48,6 @@ z.Logout()
 }
 ```
 
-Restrictions: This API uses the web interface, you can only log in to this web interface with 1 user at a time. As such, you need to be logged out of the web interface before you can use this api. and this api will error once you login, until your session expires, or you log out.
+Restrictions:
+
+This API uses the web interface, you can only log in to this web interface with 1 user at a time. As such, you need to be logged out of the web interface before you can use this api. and this api will error once you login, until your session expires, or you log out.
