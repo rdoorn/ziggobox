@@ -61,7 +61,7 @@ func (h *Handler) call(path, method string, parameters []string) (string, error)
 	data := strings.Join(parameters, "&")
 	u, _ := url.ParseRequestURI(h.baseURL)
 	u.Path = path
-	log.Printf("doing call to %s data: %v", u, data)
+	//log.Printf("doing call to %s data: %v", u, data)
 	client := &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
@@ -98,7 +98,8 @@ func (h *Handler) call(path, method string, parameters []string) (string, error)
 			for _, vss := range vs {
 				if strings.HasPrefix(vss, "sessionToken") {
 					h.sessionToken = strings.Split(vss, "=")[1]
-					log.Printf("new session token: %s", h.sessionToken)
+					//log.Printf("new session token: %s", h.sessionToken)
+					//log.Printf("new session token")
 				}
 			}
 		}
