@@ -33,6 +33,9 @@ func (h *Handler) Login(username, password string) error {
 	if err != nil {
 		return err
 	}
+	if body == "" {
+		return fmt.Errorf("Body returned nil, this can happen if you are logged in to the web interface, and did not log out.")
+	}
 	// successful;SID=167772160
 	if strings.HasPrefix("successful", body) {
 		h.sid = strings.Split(body, "=")[1]
