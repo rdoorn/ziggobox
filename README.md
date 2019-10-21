@@ -44,3 +44,5 @@ if err != nil {
 z.Logout()
 }
 ```
+
+Restrictions: This API uses the web interface, you can only log in to this web interface with 1 user at a time. As such, you need to be logged out of the web interface before you can use this api. and this api will error once you login, until your session expires, or you log out.
